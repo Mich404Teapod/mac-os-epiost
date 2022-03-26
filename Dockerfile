@@ -87,18 +87,6 @@ RUN grep -v InstallMedia ./Launch.sh > ./Launch-nopicker.sh \
     && chmod +x ./Launch-nopicker.sh \
     && sed -i -e s/OpenCore\.qcow2/OpenCore\-nopicker\.qcow2/ ./Launch-nopicker.sh
 ###
-USER arch
-ENV USER arch
-#### libguestfs versioning
-# 5.13+ problem resolved by building the qcow2 against 5.12 using libguestfs-1.44.1-6
-ENV SUPERMIN_KERNEL=/boot/vmlinuz-linux
-ENV SUPERMIN_MODULES=/lib/modules/5.12.14-arch1-1
-ENV SUPERMIN_KERNEL_VERSION=5.12.14-arch1-1
-ENV KERNEL_PACKAGE_URL=https://archive.archlinux.org/packages/l/linux/linux-5.12.14.arch1-1-x86_64.pkg.tar.zst
-ENV KERNEL_HEADERS_PACKAGE_URL=https://archive.archlinux.org/packages/l/linux/linux-headers-5.12.14.arch1-1-x86_64.pkg.tar.zst
-ENV LIBGUESTFS_PACKAGE_URL=https://archive.archlinux.org/packages/l/libguestfs/libguestfs-1.44.1-6-x86_64.pkg.tar.zst
-# fix ad hoc errors from using the arch museum to get libguestfs
-RUN sudo sed -i -e 's/^\#RemoteFileSigLevel/RemoteFileSigLevel/g' /etc/pacman.conf
 RUN sudo pacman -Syy \
     && sudo pacman -Rns linux --noconfirm \
     ; sudo pacman -S mkinitcpio --noconfirm \
