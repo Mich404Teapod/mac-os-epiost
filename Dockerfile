@@ -22,26 +22,7 @@ RUN tee -a sshd_config <<< 'AllowTcpForwarding yes' \
     && tee -a sshd_config <<< 'HostKey /etc/ssh/ssh_host_rsa_key' \
     && tee -a sshd_config <<< 'HostKey /etc/ssh/ssh_host_ecdsa_key' \
     && tee -a sshd_config <<< 'HostKey /etc/ssh/ssh_host_ed25519_key'
-
-USER arch
-
-# download OSX-KVM
-# RUN git clone --recurse-submodules --depth 1 https://github.com/kholia/OSX-KVM.git /home/arch/OSX-KVM
-RUN git clone --recurse-submodules --depth 1 https://github.com/kholia/OSX-KVM.git /home/arch/OSX-KVM
-
-# enable ssh
-# docker exec .... ./enable-ssh.sh
-USER arch
-
-WORKDIR /home/arch/OSX-KVM
-
-RUN touch enable-ssh.sh \
-    && chmod +x ./enable-ssh.sh \
-    && tee -a enable-ssh.sh <<< '[[ -f /etc/ssh/ssh_host_rsa_key ]] || \' \
-    && tee -a enable-ssh.sh <<< '[[ -f /etc/ssh/ssh_host_ed25519_key ]] || \' \
-    && tee -a enable-ssh.sh <<< '[[ -f /etc/ssh/ssh_host_ed25519_key ]] || \' \
-    && tee -a enable-ssh.sh <<< 'sudo /usr/bin/ssh-keygen -A' \
-    && tee -a enable-ssh.sh <<< 'nohup sudo /usr/bin/sshd -D &'
+    
 # QEMU CONFIGURATOR
 # set optional ram at runtime -e RAM=16
 # set optional cores at runtime -e SMP=4 -e CORES=2
@@ -182,24 +163,6 @@ ENV BASESYSTEM_FORMAT=qcow2
 # add additional QEMU boot arguments
 ENV BOOT_ARGS=
 ENV BOOTDISK=
-# edit the CPU that is being emulated
-ENV CPU=Penryn
-ENV CPUID_FLAGS='vendor=GenuineIntel,+invtsc,vmware-cpuid-freq=on,+ssse3,+sse4.2,+popcnt,+avx,+aes,+xsave,+xsaveopt,check,'
-ENV DISPLAY=:0.0
-# Deprecated
-ENV ENV=/env
-# Boolean for generating a bootdisk with new random serials.
-ENV GENERATE_UNIQUE=false
-# Boolean for generating a bootdisk with specific serials.
-ENV GENERATE_SPECIFIC=false
-ENV IMAGE_PATH=/home/arch/OSX-KVM/mac_hdd_ng.img
-ENV IMAGE_FORMAT=qcow2
-ENV KVM='accel=kvm:tcg'
-ENV MASTER_PLIST_URL="https://raw.githubusercontent.com/sickcodes/osx-serial-generator/master/config-custom.plist"
-# ENV NETWORKING=e1000-82545em
-ENV NETWORKING=vmxnet3
-# boolean for skipping the disk selection menu at in the boot process
-ENV NOPICKER=false
 # dynamic RAM options for runtime
 ENV RAM=4
 # ENV RAM=max
